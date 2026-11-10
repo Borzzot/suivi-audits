@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi des audits</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Suivi des audits</h1>
+  </header>
+
+  <main>
+
+    <section id="filtres">
+      <h2>Filtres</h2>
+      <label for="filtre-site">Site</label>
+      <select id="filtre-site">
+        <option value="">Tous les sites</option>
+      </select>
+
+      <label for="filtre-statut">Statut</label>
+      <select id="filtre-statut">
+        <option value="">Tous les statuts</option>
+        <option value="a-planifier">À planifier</option>
+        <option value="planifie">Planifié</option>
+        <option value="realise">Réalisé</option>
+      </select>
+    </section>
+
+    <section id="liste">
+      <h2>Liste des audits</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Site</th>
+            <th>Date prévue</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="corps-tableau">
+          <!-- Ligne d'exemple, à supprimer à l'étape 3 -->
+          <tr>
+            <td>Toulouse</td>
+            <td>2026-12-15</td>
+            <td>Planifié</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="ajout">
+      <h2>Ajouter un audit</h2>
+      <form id="formulaire-audit">
+        <label for="champ-site">Site</label>
+        <select id="champ-site" name="site" required>
+          <option value="">Choisir un site</option>
+        </select>
+
+        <label for="champ-date">Date prévue</label>
+        <input type="date" id="champ-date" name="datePrevue">
+
+        <label for="champ-statut">Statut</label>
+        <select id="champ-statut" name="statut" required>
+          <option value="a-planifier">À planifier</option>
+          <option value="planifie">Planifié</option>
+          <option value="realise">Réalisé</option>
+        </select>
+
+        <button type="submit">Ajouter</button>
+      </form>
+    </section>
+
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -7,6 +7,10 @@ Ajoutez une ligne sur ce que vous avez choisi de ne pas déléguer à l'IA. Dite
 
 
 
+
+
+
+
 outil : Claude / étape : clarification du besoin / demandé : 10 questions de cadrage / apporté : une grille de questions, dont j’ai gardé 3 quesitons qui me semblent les plus importantes. vérifié : j’ai transformé les réponses en hypothèses écrites dans le README.
 
 Outil : Claude / étape : squelette HTML / demandé : le HTML seul avec explication de chaque balise / apporté : une structure complète, que j’ai relue et testée dans le navigateur / vérifié : le rendu, les labels, le required

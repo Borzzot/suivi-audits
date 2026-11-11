@@ -1,0 +1,20 @@
+/* Ligne d'un audit en retard : fond rosé pour la repérer d'un coup d'œil */
+.ligne-retard {
+  background-color: #fdecea;
+}
+
+/* Badge rouge pour les retards avec date */
+.badge-retard {
+  display: inline-block;
+  margin-left: 0.5em;
+  padding: 0.1em 0.6em;
+  border-radius: 1em;
+  background-color: #c62828;
+  color: white;
+  font-size: 0.85em;
+}
+
+/* Badge orange pour "à planifier" : situation différente d'un retard daté */
+.badge-sans-date {
+  background-color: #e65100;
+}

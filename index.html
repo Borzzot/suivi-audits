@@ -51,7 +51,143 @@
       </table>
     </section>
 
+    <section id="ajout"><!DOCTYPE html>
+<!-- Indique au navigateur que c'est du HTML5 moderne -->
+<html lang="fr">
+<!-- <html> : racine de la page. lang="fr" précise la langue (accessibilité, correcteur orthographique) -->
+
+<head>
+  <!-- <head> : informations sur la page, rien n'est affiché ici -->
+
+  <meta charset="UTF-8">
+  <!-- Encodage des caractères : sans lui, les accents peuvent s'afficher mal (PlanifiÃ©) -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Adapte l'affichage à la largeur de l'écran (indispensable pour le mobile) -->
+
+  <title>Suivi des audits</title>
+  <!-- Texte affiché dans l'onglet du navigateur -->
+
+  <link rel="stylesheet" href="style.css">
+  <!-- Relie la feuille de style : href = chemin du fichier CSS -->
+</head>
+
+<body>
+  <!-- <body> : tout ce qui est visible dans la page -->
+
+  <header>
+    <!-- <header> : l'en-tête de la page (balise "sémantique" : elle décrit son rôle) -->
+    <h1>Suivi des audits</h1>
+    <!-- <h1> : titre principal. Un seul par page -->
+  </header>
+
+  <main>
+    <!-- <main> : le contenu principal de la page. Un seul par page -->
+
+    <!-- ===================== FILTRES ===================== -->
+    <section id="filtres">
+      <!-- <section> : bloc thématique. L'id sert à le cibler en CSS et en JavaScript -->
+      <h2>Filtres</h2>
+      <!-- <h2> : titre de section, un niveau sous le <h1> -->
+
+      <label for="filtre-site">Site</label>
+      <!-- <label> : étiquette d'un champ. Son "for" doit être identique à l'id du champ,
+           ce qui permet d'activer le champ en cliquant sur le texte -->
+      <select id="filtre-site">
+        <!-- <select> : liste déroulante. L'id servira au JavaScript pour lire le choix -->
+        <option value="">Tous les sites</option>
+        <!-- <option> : un choix. value="" = "pas de filtre".
+             Les sites seront ajoutés par le JavaScript à partir des données (étape 5),
+             pour ne pas les écrire à la main -->
+      </select>
+
+      <label for="filtre-statut">Statut</label>
+      <select id="filtre-statut">
+        <option value="">Tous les statuts</option>
+        <!-- Le texte affiché (À planifier) est différent de la value (a-planifier) :
+             c'est la value que le JavaScript lira. Pas d'accent ni d'espace dedans -->
+        <option value="a-planifier">À planifier</option>
+        <option value="planifie">Planifié</option>
+        <option value="realise">Réalisé</option>
+      </select>
+    </section>
+
+    <!-- ===================== LISTE DES AUDITS ===================== -->
+    <section id="liste">
+      <h2>Liste des audits</h2>
+
+      <table>
+        <!-- <table> : le tableau -->
+        <thead>
+          <!-- <thead> : l'en-tête du tableau (les titres de colonnes) -->
+          <tr>
+            <!-- <tr> : une ligne (table row) -->
+            <th>Site</th>
+            <!-- <th> : cellule d'en-tête (en gras et centrée par défaut) -->
+            <th>Date prévue</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+
+        <tbody id="corps-tableau">
+          <!-- <tbody> : le corps du tableau. C'est CE bloc que le JavaScript
+               va remplir avec les audits (d'où son id) -->
+
+          <!-- Ligne d'exemple pour voir le rendu : à SUPPRIMER à l'étape 3 -->
+          <tr>
+            <td>Toulouse</td>
+            <!-- <td> : cellule de données (table data) -->
+            <td>2026-12-15</td>
+            <td>Planifié</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===================== FORMULAIRE D'AJOUT ===================== -->
     <section id="ajout">
+      <h2>Ajouter un audit</h2>
+
+      <form id="formulaire-audit">
+        <!-- <form> : regroupe les champs. Le JavaScript écoutera son envoi grâce à l'id -->
+
+        <label for="champ-site">Site</label>
+        <select id="champ-site" name="site" required>
+          <!-- name : nom du champ, utile pour récupérer sa valeur.
+               required : le navigateur bloque l'envoi si ce champ est vide -->
+          <option value="">Choisir un site</option>
+          <!-- Valeur vide + required = l'utilisateur est obligé de choisir un vrai site.
+               Les autres options seront générées par le JavaScript -->
+        </select>
+
+        <label for="champ-date">Date prévue</label>
+        <input type="date" id="champ-date" name="datePrevue">
+        <!-- <input type="date"> : sélecteur de date. Sa valeur est au format AAAA-MM-JJ,
+             le même format que dans les données.
+             Pas de "required" ici : un audit "à planifier" n'a pas forcément de date
+             (à confirmer avec ton hypothèse) -->
+
+        <label for="champ-statut">Statut</label>
+        <select id="champ-statut" name="statut" required>
+          <option value="a-planifier">À planifier</option>
+          <option value="planifie">Planifié</option>
+          <option value="realise">Réalisé</option>
+        </select>
+
+        <button type="submit">Ajouter</button>
+        <!-- type="submit" : un clic envoie le formulaire (le JavaScript interceptera cet envoi) -->
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Scripts placés en bas du <body> : ils s'exécutent quand la page est déjà construite.
+       L'ordre compte : les données (data.js) doivent être chargées AVANT le code (app.js)
+       qui les utilise -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
       <h2>Ajouter un audit</h2>
       <form id="formulaire-audit">
         <label for="champ-site">Site</label>

@@ -1,5 +1,6 @@
 # suivi-audits
 
+à revoir
 
 À quelle fréquence l’ouvrira-t-il (tous les jours, une fois par semaine) et sur quel appareil (PC, tablette, téléphone) ? Je fais l’hypothèse ici que l’application sera ouverte une fois par semaine afin de vérifier l’avancement des audits et qu’ouvrir l’application tous les jours n’arrive pas souvent. L’application sera utilisé sur un ordinateur. Je présume qu’il faut un endroit sécurisé pour consulter des données sensibles.
 

@@ -13,4 +13,3 @@ Outil : Claude / étape : squelette HTML / demandé : le HTML seul avec explicat
 
 Outil : Claude / étape : génération des données de test / demandé : 30 audits sur 10 sites avec cas limites / apporté : un jeu de données couvrant retards, date du jour, null et un site sans audit à venir / vérifié : comptage, cohérence des dates et des statuts.
 
-Claude / étape : affichage de la liste / demandé : une fonction afficherAudits(liste) expliquée ligne par ligne / apporté : le code et l’explication du DOM et de la boucle / vérifié : 30 lignes affichées, cas null géré, modification de données testée, colonne ajoutée seul. Si une partie t’a semblé floue (le [annee, mois, jour] = ..., par exemple), note-le : l’honnêteté sur ce que tu as dû relire compte autant que le reste.

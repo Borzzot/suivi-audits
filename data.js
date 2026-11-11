@@ -3,7 +3,7 @@
 // ============================================================
 
 // "const" déclare une variable qui ne sera pas réassignée.
-// Mais le CONTENU du tableau pourra être modifié (push, etc.) : on s'en servira à l'étape 6.
+// Mais le CONTENU du tableau pourra être modifié (push, etc.)
 // Un tableau se note avec des crochets [ ... ], et chaque audit est un objet { ... }.
 //
 // Champs d'un audit :
@@ -14,7 +14,7 @@
 //                (ce sont les mêmes valeurs que les value="" des <option> du HTML)
 //
 // "null" signifie "volontairement vide". Ce n'est ni une chaîne vide "" ni la valeur 0.
-// Il faudra donc tester datePrevue avant de la comparer à une date (étape 4).
+
 
 const audits = [
 
@@ -61,7 +61,7 @@ const audits = [
   // ---------- Rennes ----------
   { id: 25, site: "Rennes",           datePrevue: "2026-10-27", statut: "planifie" },    // EN RETARD (15 jours)
   { id: 26, site: "Rennes",           datePrevue: "2026-12-17", statut: "planifie" },
-  { id: 27, site: "Rennes",           datePrevue: "2026-11-30", statut: "realise" },     // INCOHÉRENT : "réalisé" mais date future (volontaire, pour tester)
+  { id: 27, site: "Rennes",           datePrevue: "2026-11-30", statut: "planifie" },     // INCOHÉRENT : "réalisé" mais date future (volontaire, pour tester)
 
   // ---------- Dijon ----------
   // Dijon n'a QUE des audits réalisés : aucun audit à venir ni à planifier.

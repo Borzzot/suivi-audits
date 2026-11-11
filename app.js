@@ -111,7 +111,21 @@ function joursDeRetard(audit) {
 
 
 function afficherAudits(liste) {
-  corpsTableau.innerHTML = "";
+    corpsTableau.innerHTML = "";
+
+  // Cas limite : aucun audit ne correspond aux filtres.
+  // Sans ce test, le tableau serait simplement vide, ce qui ressemble à un bug.
+  if (liste.length === 0) {
+    const ligneVide = document.createElement("tr");
+    const celluleVide = document.createElement("td");
+    // colSpan = 3 : la cellule s'étend sur les 3 colonnes du tableau
+    celluleVide.colSpan = 3;
+    celluleVide.textContent = "Aucun audit ne correspond aux filtres.";
+    ligneVide.appendChild(celluleVide);
+    corpsTableau.appendChild(ligneVide);
+    // return : on sort de la fonction, il n'y a rien d'autre à afficher
+    return;
+  }
 
   for (const audit of liste) {
     const ligne = document.createElement("tr");
@@ -153,10 +167,87 @@ function afficherAudits(liste) {
 }
 
 // ------------------------------------------------------------
-// 5. Lancement au chargement de la page
+// 5. Les filtres (étape 5)
 // ------------------------------------------------------------
 
-// "audits" vient de data.js, chargé avant app.js (voir l'ordre des <script>).
-// Définir une fonction ne l'exécute pas : il faut l'APPELER.
-// Cet appel affiche les 30 audits dès l'ouverture de la page.
-afficherAudits(audits);
+// On récupère les éléments HTML dont on va lire la valeur.
+const filtreSite = document.querySelector("#filtre-site");
+const filtreStatut = document.querySelector("#filtre-statut");
+const filtreRetard = document.querySelector("#filtre-retard");
+const champSite = document.querySelector("#champ-site"); // le <select> du formulaire d'ajout
+
+// Génère les options des listes de sites À PARTIR DES DONNÉES.
+// Avantage : si un site apparaît dans les données, il apparaît dans la liste,
+// sans rien écrire à la main dans le HTML.
+function remplirListesSites() {
+  // audits.map(...) crée un nouveau tableau ne contenant que les noms de sites
+  // (avec des doublons : "Toulouse" apparaît 3 fois).
+  const tousLesSites = audits.map(function (audit) {
+    return audit.site;
+  });
+
+  // new Set(...) est une collection qui ne garde qu'UNE fois chaque valeur : elle supprime les doublons.
+  // [...ensemble] (opérateur "spread") la retransforme en tableau classique.
+  // sort(...) trie par ordre alphabétique ; localeCompare gère correctement les accents.
+  const sitesUniques = [...new Set(tousLesSites)].sort(function (a, b) {
+    return a.localeCompare(b, "fr");
+  });
+
+  for (const site of sitesUniques) {
+    // Une <option> pour le filtre...
+    const option = document.createElement("option");
+    option.value = site;          // valeur lue par le JavaScript
+    option.textContent = site;    // texte visible dans la liste
+    filtreSite.appendChild(option);
+
+    // ...et une copie pour le formulaire d'ajout (étape 6).
+    // cloneNode(true) duplique l'élément : un même élément ne peut être qu'à un seul endroit.
+    champSite.appendChild(option.cloneNode(true));
+  }
+}
+
+// LA LOGIQUE DES FILTRES : on lit l'état des 3 contrôles, puis on garde
+// uniquement les audits qui respectent TOUTES les conditions.
+function appliquerFiltres() {
+  const siteChoisi = filtreSite.value;           // "" = "Tous les sites"
+  const statutChoisi = filtreStatut.value;       // "" = "Tous les statuts"
+  const retardSeulement = filtreRetard.checked;  // true ou false
+
+  // filter() parcourt le tableau et garde les éléments pour lesquels la fonction renvoie true.
+  // Elle crée un NOUVEAU tableau : le tableau "audits" d'origine n'est jamais modifié.
+  const resultat = audits.filter(function (audit) {
+
+    // Chaque test dit : "si ce filtre est actif ET que l'audit ne correspond pas, on l'écarte".
+    // Dès qu'un test échoue, on renvoie false (audit éliminé) sans vérifier la suite.
+    if (siteChoisi !== "" && audit.site !== siteChoisi) {
+      return false;
+    }
+    if (statutChoisi !== "" && audit.statut !== statutChoisi) {
+      return false;
+    }
+    if (retardSeulement && !estEnRetard(audit)) {
+      return false;
+    }
+
+    // L'audit a passé tous les tests : on le garde.
+    return true;
+  });
+
+  // On réutilise la fonction de l'étape 3, qui prend une liste en paramètre.
+  afficherAudits(resultat);
+}
+
+// Les événements : "change" se déclenche quand l'utilisateur change la valeur
+// d'une liste ou coche/décoche une case. À ce moment-là, on relance le filtrage.
+// On passe appliquerFiltres SANS parenthèses : on donne la fonction, on ne l'exécute pas encore.
+filtreSite.addEventListener("change", appliquerFiltres);
+filtreStatut.addEventListener("change", appliquerFiltres);
+filtreRetard.addEventListener("change", appliquerFiltres);
+
+// ------------------------------------------------------------
+// 6. Lancement au chargement de la page
+// ------------------------------------------------------------
+
+// Les listes de sites d'abord, puis le premier affichage (aucun filtre actif = tout s'affiche).
+remplirListesSites();
+appliquerFiltres();

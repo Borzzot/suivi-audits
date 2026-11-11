@@ -57,6 +57,12 @@
         <option value="planifie">Planifié</option>
         <option value="realise">Réalisé</option>
       </select>
+
+            <!-- type="checkbox" : case à cocher. Elle ne contient pas de texte, d'où le <label> à côté.
+           Le JavaScript lira sa propriété .checked (true si cochée, false sinon) -->
+      <input type="checkbox" id="filtre-retard">
+      <label for="filtre-retard">Retards seulement</label>
+      
     </section>
 
     <!-- ===================== LISTE DES AUDITS ===================== -->

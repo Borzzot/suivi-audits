@@ -17,4 +17,6 @@ Outil : Claude / étape : règle de retard / demandé : une fonction estEnRetard
 
 Outil : Claude / étape : filtres / demandé : filtres site + statut combinés, options générées depuis les données / apporté : la logique filter et Set, le message « aucun résultat » / vérifié : 7 combinaisons testées avec résultats attendus ; choix perso : case « Retards seulement » plutôt qu’une option de statut.
 
-
+Outil : Claude / étape : formulaire d’ajout / demandé : validation, nouvel id, ajout, rafraîchissement, explication de preventDefault / apporté : le code et une règle d’id plus robuste que length + 1 / vérifié : 9 cas testés, test sans preventDefault. Décisions perso : date obligatoire si planifié
+Après vérification : J'ai demandé moi même à l'IA : La date est obligatoire sauf pour un audit à planifier.
+J'ai fais une correction : je veux lorsque on met un audit à planifier on ne peut pas mettre de date. l’IA a corrigé deux erreurs que j'ai faites(faute de valeur, condition inversée).

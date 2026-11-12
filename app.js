@@ -244,6 +244,98 @@ filtreSite.addEventListener("change", appliquerFiltres);
 filtreStatut.addEventListener("change", appliquerFiltres);
 filtreRetard.addEventListener("change", appliquerFiltres);
 
+
+// ------------------------------------------------------------
+// 5 bis. Ajout d'un audit (étape 6)
+// ------------------------------------------------------------
+
+const formulaire = document.querySelector("#formulaire-audit");
+const champDate = document.querySelector("#champ-date");
+const champStatut = document.querySelector("#champ-statut");
+const messageErreur = document.querySelector("#message-erreur");
+
+// Calcule un nouvel id unique : le plus grand id existant + 1.
+// On n'utilise PAS audits.length + 1 : si un jour on supprime un audit
+// (ex. l'id 5 sur 30), length + 1 redonnerait 30, qui existe déjà -> doublon.
+function nouvelId() {
+  // audits.map(...) : tableau des ids [1, 2, 3, ... 30]
+  // Math.max(...tableau) : le plus grand ; le "..." (spread) passe chaque id comme argument
+  const ids = audits.map(function (audit) {
+    return audit.id;
+  });
+  return Math.max(...ids) + 1;
+}
+
+// Vérifie les champs. Renvoie un message d'erreur (texte) ou "" si tout est valide.
+// Le HTML (required) fait déjà une première vérification, mais on revérifie en JavaScript :
+// la validation du navigateur peut être contournée, et notre règle métier
+// ("planifié => date obligatoire") ne peut pas s'écrire en HTML seul.
+function verifierFormulaire(site, date, statut) {
+  if (site === "") {
+    return "Choisis un site.";
+  }
+  // règle 1 : un audit planifié ou réalisé doit avoir une date.
+  if (statut === "planifie" && date === "" || statut === "realise" && date === "") {
+    return "La date est obligatoire pour un audit planifié ou réalisé.";
+  }
+
+  // règle 2 : un audit à planifier ne peut pas avoir de date
+  if (statut === "a-planifier" && date !== ""){
+    return "Pas de date possible pour un audit à planifier."
+  }
+
+  return "";
+}
+
+// L'événement "submit" se déclenche quand on clique sur "Ajouter" (ou qu'on appuie sur Entrée).
+// "evenement" est un objet que le navigateur nous donne, avec des infos sur ce qui s'est passé.
+formulaire.addEventListener("submit", function (evenement) {
+
+  // preventDefault() : par défaut, un formulaire envoyé RECHARGE la page
+  // (il enverrait les données à un serveur). Ici il n'y a pas de serveur :
+  // la page rechargée effacerait notre tableau en mémoire, donc l'audit ajouté
+  // disparaîtrait aussitôt. On annule ce comportement pour gérer l'envoi nous-mêmes.
+  evenement.preventDefault();
+
+  // 1. Lire les valeurs saisies (.value = ce que l'utilisateur a choisi ou tapé).
+  const site = champSite.value;
+  const date = champDate.value;     // "" si aucune date, sinon "AAAA-MM-JJ"
+  const statut = champStatut.value;
+
+  // 2. Valider. S'il y a une erreur, on l'affiche et on s'arrête (return).
+  const erreur = verifierFormulaire(site, date, statut);
+  messageErreur.textContent = erreur;   // vide si pas d'erreur : le message disparaît
+  if (erreur !== "") {
+    return;
+  }
+
+  // 3. Construire le nouvel audit, avec la même forme que ceux de data.js.
+  // MA DÉCISION : un audit "à planifier" n'a pas de date, on force donc null.
+  // Pour les autres statuts, une date vide est déjà refusée plus haut (planifié),
+  // sinon on la garde. "date === '' ? null : date" signifie : si vide, null, sinon la date.
+  const nouvelAudit = {
+    id: nouvelId(),
+    site: site,
+    datePrevue: statut === "a-planifier" ? null : date,
+    statut: statut
+  };
+
+  // 4. Ajouter au tableau. push() ajoute à la fin. Le tableau est "const",
+  // mais seule la variable est figée : son contenu reste modifiable.
+  audits.push(nouvelAudit);
+
+  // 5. Rafraîchir l'affichage. On passe par appliquerFiltres (et non afficherAudits(audits)),
+  // pour que les filtres actifs restent respectés.
+  appliquerFiltres();
+
+  // 6. Remettre le formulaire à zéro, prêt pour une nouvelle saisie.
+  formulaire.reset();
+});
+
+
+
+
+
 // ------------------------------------------------------------
 // 6. Lancement au chargement de la page
 // ------------------------------------------------------------

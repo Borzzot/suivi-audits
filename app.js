@@ -119,7 +119,7 @@ function afficherAudits(liste) {
     const ligneVide = document.createElement("tr");
     const celluleVide = document.createElement("td");
     // colSpan = 3 : la cellule s'étend sur les 3 colonnes du tableau
-    celluleVide.colSpan = 3;
+    celluleVide.colSpan = 4;
     celluleVide.textContent = "Aucun audit ne correspond aux filtres.";
     ligneVide.appendChild(celluleVide);
     corpsTableau.appendChild(ligneVide);
@@ -159,9 +159,26 @@ function afficherAudits(liste) {
       celluleStatut.appendChild(badge);
     }
 
+    // Cellule d'actions avec le bouton "Modifier"
+    const celluleActions = document.createElement("td");
+    const boutonModifier = document.createElement("button");
+    boutonModifier.type = "button";
+    boutonModifier.textContent = "Modifier";
+
+    // COMMENT ON RETROUVE L'AUDIT : on mémorise l'ID de CET audit dans la fonction
+    // du clic. "audit" est la variable de la boucle for...of : à chaque tour elle
+    // désigne un audit différent, et chaque bouton "se souvient" du sien (on appelle
+    // ça une closure). Au clic, on transmet donc l'id exact de la ligne cliquée.
+    boutonModifier.addEventListener("click", function () {
+      demarrerModification(audit.id);
+    });
+
+    celluleActions.appendChild(boutonModifier);
+
     ligne.appendChild(celluleSite);
     ligne.appendChild(celluleDate);
     ligne.appendChild(celluleStatut);
+    ligne.appendChild(celluleActions); 
     corpsTableau.appendChild(ligne);
   }
 }
@@ -287,6 +304,77 @@ function verifierFormulaire(site, date, statut) {
   return "";
 }
 
+
+// ------------------------------------------------------------
+// 5 ter. Modification d'un audit (étape 7)
+// ------------------------------------------------------------
+
+// MÉMOIRE DU MODE : null = on ajoute ; un nombre = id de l'audit en cours de modification.
+// "let" et non "const", car la valeur va changer.
+let idEnModification = null;
+
+const boutonValider = document.querySelector("#bouton-valider");
+const boutonAnnuler = document.querySelector("#bouton-annuler");
+const titreFormulaire = document.querySelector("#ajout h2"); // le <h2> de la section "ajout"
+
+// Retrouve un audit à partir de son id.
+// find() parcourt le tableau et renvoie le PREMIER élément pour lequel la fonction
+// renvoie true (ou undefined si rien ne correspond).
+// POURQUOI L'ID ET PAS LA POSITION DANS LE TABLEAU ? Quand un filtre est actif, la ligne
+// n°1 affichée n'est pas forcément audits[0]. La position change, l'id jamais.
+function trouverAudit(id) {
+  return audits.find(function (audit) {
+    return audit.id === id;
+  });
+}
+
+// Appelée au clic sur "Modifier" : passe le formulaire en mode modification.
+function demarrerModification(id) {
+  const audit = trouverAudit(id);
+  if (audit === undefined) {
+    return; // sécurité : id introuvable, on ne fait rien
+  }
+
+  // 1. On mémorise quel audit on modifie (c'est ça qui évite le doublon, voir plus bas).
+  idEnModification = id;
+
+  // 2. On préremplit le formulaire avec les valeurs actuelles de l'audit.
+  champSite.value = audit.site;
+  champStatut.value = audit.statut;
+  // datePrevue vaut null pour un audit "à planifier", mais un champ date attend "" :
+  champDate.value = (audit.datePrevue === null) ? "" : audit.datePrevue;
+
+  // 3. Changer .value par code ne déclenche PAS l'événement "change".
+  // On le déclenche à la main pour que d'éventuels écouteurs (ex. : grisage du champ
+  // date pour "À planifier") se mettent à jour. Sans effet si tu n'as pas cette option.
+  champStatut.dispatchEvent(new Event("change"));
+
+  // 4. On adapte l'interface pour que l'utilisateur sache qu'il est en mode modification.
+  titreFormulaire.textContent = "Modifier l'audit n°" + id;
+  boutonValider.textContent = "Confirmer la modification";
+  boutonAnnuler.hidden = false;
+  messageErreur.textContent = "";
+
+  // 5. Le formulaire peut être en bas de page : on y fait défiler l'écran.
+  formulaire.scrollIntoView({ behavior: "smooth" });
+}
+
+// Remet le formulaire en mode "ajout" (après une modification, ou un clic sur Annuler).
+function terminerModification() {
+  idEnModification = null;
+  formulaire.reset();
+  champStatut.dispatchEvent(new Event("change")); // met à jour l'état du champ date
+  titreFormulaire.textContent = "Ajouter un audit";
+  boutonValider.textContent = "Ajouter";
+  boutonAnnuler.hidden = true;
+  messageErreur.textContent = "";
+}
+
+boutonAnnuler.addEventListener("click", terminerModification);
+
+
+
+
 // L'événement "submit" se déclenche quand on clique sur "Ajouter" (ou qu'on appuie sur Entrée).
 // "evenement" est un objet que le navigateur nous donne, avec des infos sur ce qui s'est passé.
 formulaire.addEventListener("submit", function (evenement) {
@@ -309,27 +397,35 @@ formulaire.addEventListener("submit", function (evenement) {
     return;
   }
 
-  // 3. Construire le nouvel audit, avec la même forme que ceux de data.js.
-  // MA DÉCISION : un audit "à planifier" n'a pas de date, on force donc null.
-  // Pour les autres statuts, une date vide est déjà refusée plus haut (planifié),
-  // sinon on la garde. "date === '' ? null : date" signifie : si vide, null, sinon la date.
-  const nouvelAudit = {
-    id: nouvelId(),
-    site: site,
-    datePrevue: statut === "a-planifier" ? null : date,
-    statut: statut
-  };
+    // 3. La date à enregistrer : null pour "à planifier", sinon la date saisie.
+  const datePrevue = (statut === "a-planifier") ? null : date;
 
-  // 4. Ajouter au tableau. push() ajoute à la fin. Le tableau est "const",
-  // mais seule la variable est figée : son contenu reste modifiable.
-  audits.push(nouvelAudit);
+  // 4. DEUX CAS selon le mode :
+  if (idEnModification !== null) {
+    // MODE MODIFICATION : on retrouve l'audit existant et on change ses champs.
+    // "audit" n'est pas une copie : c'est une référence vers l'objet qui est DANS
+    // le tableau "audits". Modifier ses propriétés modifie donc directement le tableau.
+    // On ne fait pas push() : l'audit existe déjà, il n'y a donc PAS de doublon.
+    // On garde le même id : c'est ce qui identifie l'audit.
+    const audit = trouverAudit(idEnModification);
+    audit.site = site;
+    audit.datePrevue = datePrevue;
+    audit.statut = statut;
+  } else {
+    // MODE AJOUT : comme à l'étape 6, on crée un nouvel audit avec un nouvel id.
+    audits.push({
+      id: nouvelId(),
+      site: site,
+      datePrevue: datePrevue,
+      statut: statut
+    });
+  }
 
-  // 5. Rafraîchir l'affichage. On passe par appliquerFiltres (et non afficherAudits(audits)),
-  // pour que les filtres actifs restent respectés.
+  // 5. Rafraîchir l'affichage en respectant les filtres actifs.
   appliquerFiltres();
 
-  // 6. Remettre le formulaire à zéro, prêt pour une nouvelle saisie.
-  formulaire.reset();
+  // 6. Revenir en mode "ajout" et vider le formulaire (remplace l'ancien formulaire.reset()).
+  terminerModification();
 });
 
 

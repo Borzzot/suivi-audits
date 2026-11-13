@@ -20,3 +20,5 @@ Outil : Claude / étape : filtres / demandé : filtres site + statut combinés, 
 Outil : Claude / étape : formulaire d’ajout / demandé : validation, nouvel id, ajout, rafraîchissement, explication de preventDefault / apporté : le code et une règle d’id plus robuste que length + 1 / vérifié : 9 cas testés, test sans preventDefault. Décisions perso : date obligatoire si planifié
 Après vérification : J'ai demandé moi même à l'IA : La date est obligatoire sauf pour un audit à planifier.
 J'ai fais une correction : je veux lorsque on met un audit à planifier on ne peut pas mettre de date. l’IA a corrigé deux erreurs que j'ai faites(faute de valeur, condition inversée).
+
+Claude / étape : modification d’un audit / demandé : bouton « Modifier » préremplissant le formulaire, sans doublon, avec explication de la recherche par id / apporté : la variable de mode idEnModification, find, la closure dans la boucle / vérifié : 30 lignes conservées après modification, annulation, validation toujours active en mode modification. Décisions perso : tout est modifiable, confirmation obligatoire par bouton.

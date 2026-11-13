@@ -1,4 +1,9 @@
 # suivi-audits
+utilisation de GitHub CLI pour push
+GitHub.com
+Protocole : HTTPS
+Authenticate Git with your GitHub credentials ? : Yes
+Méthode : Login with a web browser
 
 Sur quel appareil (PC, tablette, téléphone) ? L’application sera utilisé sur un ordinateur car qu’il faut un endroit sécurisé pour consulter des données sensibles.
 

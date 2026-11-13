@@ -18,3 +18,8 @@
 .badge-sans-date {
   background-color: #e65100;
 }
+
+/* Ligne en cours de modification : non géré ici, mais le bouton Annuler a un style simple */
+#bouton-annuler {
+  margin-left: 0.5em;
+}

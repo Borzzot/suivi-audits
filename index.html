@@ -79,6 +79,8 @@
             <!-- <th> : cellule d'en-tête (en gras et centrée par défaut) -->
             <th>Date prévue</th>
             <th>Statut</th>
+            
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -121,8 +123,15 @@
           <option value="realise">Réalisé</option>
         </select>
 
-        <button type="submit">Ajouter</button>
         <!-- type="submit" : un clic envoie le formulaire (le JavaScript interceptera cet envoi) -->
+        <!-- id : le JavaScript changera son texte ("Ajouter" ou "Confirmer la modification") -->
+        <button type="submit" id="bouton-valider">Ajouter</button>
+
+        <!-- type="button" : ce bouton NE soumet PAS le formulaire (le défaut serait "submit").
+             hidden : invisible tant qu'on n'est pas en mode modification -->
+        <button type="button" id="bouton-annuler" hidden>Annuler</button>
+
+        
          
                  <!-- Zone où le JavaScript affichera les erreurs de validation.
              role="alert" : les lecteurs d'écran l'annoncent quand son texte change -->

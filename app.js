@@ -13,6 +13,64 @@
 const corpsTableau = document.querySelector("#corps-tableau");
 
 // ------------------------------------------------------------
+// 1 bis. Persistance avec localStorage (étape 8)
+// ------------------------------------------------------------
+
+// La clé sous laquelle on range nos données dans le localStorage.
+// Si un autre site utilisait la même clé sur le même domaine, les données se mélangeraient :
+// on choisit donc un nom spécifique à notre application.
+const CLE_STOCKAGE = "suivi-audits";
+
+// Lit les audits sauvegardés. Renvoie un tableau, ou null s'il n'y a rien d'exploitable.
+function lireSauvegarde() {
+  // try...catch : si une erreur se produit dans le "try", le programme ne plante pas,
+  // il saute dans le "catch". Deux erreurs possibles ici :
+  //  - localStorage inaccessible (navigation privée stricte, stockage bloqué) ;
+  //  - texte corrompu : JSON.parse renvoie une erreur si le texte n'est pas du JSON valide.
+  try {
+    // getItem renvoie le texte stocké, ou null si la clé n'existe pas (premier lancement).
+    const texte = localStorage.getItem(CLE_STOCKAGE);
+    if (texte === null) {
+      return null;
+    }
+
+    // JSON.parse : retransforme le texte en vrai tableau d'objets.
+    const donnees = JSON.parse(texte);
+
+    // Vérification de sécurité : on s'attend à un tableau. Si quelqu'un (ou un bug)
+    // a stocké autre chose, on ignore la sauvegarde plutôt que de planter plus loin.
+    if (!Array.isArray(donnees)) {
+      return null;
+    }
+    return donnees;
+  } catch (erreur) {
+    console.warn("Sauvegarde illisible, utilisation des données de départ.", erreur);
+    return null;
+  }
+}
+
+// Enregistre l'état actuel du tableau "audits". À appeler après CHAQUE changement.
+function sauvegarderAudits() {
+  try {
+    // JSON.stringify : transforme le tableau en texte.
+    // setItem(clé, texte) : range ce texte dans le localStorage (il écrase l'ancienne valeur).
+    localStorage.setItem(CLE_STOCKAGE, JSON.stringify(audits));
+  } catch (erreur) {
+    // Stockage plein ou bloqué : l'application continue de fonctionner, sans sauvegarde.
+    console.warn("Impossible de sauvegarder.", erreur);
+  }
+}
+
+// LE CHOIX AU DÉMARRAGE :
+//  - s'il y a une sauvegarde : on l'utilise ;
+//  - sinon (premier lancement) : on part d'une COPIE des données de data.js.
+// "||" signifie "ou" : si la partie gauche vaut null, on prend la partie droite.
+// structuredClone fait une copie indépendante : sans elle, modifier "audits"
+// modifierait aussi "auditsInitiaux" (même objets en mémoire).
+const audits = lireSauvegarde() || structuredClone(auditsInitiaux);
+
+
+// ------------------------------------------------------------
 // 2. Tables de correspondance pour l'affichage des statuts
 // ------------------------------------------------------------
 
@@ -421,14 +479,29 @@ formulaire.addEventListener("submit", function (evenement) {
     });
   }
 
-  // 5. Rafraîchir l'affichage en respectant les filtres actifs.
+    // 5. Sauvegarder AVANT de rafraîchir : l'état est enregistré dès qu'il change.
+  sauvegarderAudits();
+
+  // Rafraîchir l'affichage en respectant les filtres actifs.
   appliquerFiltres();
 
   // 6. Revenir en mode "ajout" et vider le formulaire (remplace l'ancien formulaire.reset()).
   terminerModification();
 });
 
+const boutonReinitialiser = document.querySelector("#bouton-reinitialiser");
 
+boutonReinitialiser.addEventListener("click", function () {
+  // confirm() ouvre une fenêtre Oui/Annuler et renvoie true ou false.
+  // Action destructive : on demande confirmation.
+  if (!confirm("Effacer toutes vos modifications et revenir aux données de départ ?")) {
+    return;
+  }
+  // removeItem supprime la clé. Au rechargement, il n'y aura plus de sauvegarde,
+  // donc data.js sera rechargé (premier lancement).
+  localStorage.removeItem(CLE_STOCKAGE);
+  location.reload(); // recharge la page
+});
 
 
 

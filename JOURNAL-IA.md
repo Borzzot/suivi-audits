@@ -7,7 +7,7 @@ Ajoutez une ligne sur ce que vous avez choisi de ne pas déléguer à l'IA. Dite
 
 Je n'ai pas délégué à l'IA les modifications directes du projets par lui même.
 
-outil : Claude / étape : clarification du besoin / demandé : 10 questions de cadrage / apporté : une grille de questions, dont j’ai gardé 3 quesitons qui me semblent les plus importantes. vérifié : j’ai transformé les réponses en hypothèses écrites dans le README.
+Outil : Claude / étape : clarification du besoin / demandé : 10 questions de cadrage / apporté : une grille de questions, dont j’ai gardé 3 quesitons qui me semblent les plus importantes. vérifié : j’ai transformé les réponses en hypothèses écrites dans le README.
 
 Outil : Claude / étape : squelette HTML / demandé : le HTML seul avec explication de chaque balise / apporté : une structure complète, que j’ai relue et testée dans le navigateur / vérifié : le rendu, les labels, le required
 
@@ -21,4 +21,6 @@ Outil : Claude / étape : formulaire d’ajout / demandé : validation, nouvel i
 Après vérification : J'ai demandé moi même à l'IA : La date est obligatoire sauf pour un audit à planifier.
 J'ai fais une correction : je veux lorsque on met un audit à planifier on ne peut pas mettre de date. l’IA a corrigé deux erreurs que j'ai faites(faute de valeur, condition inversée).
 
-Claude / étape : modification d’un audit / demandé : bouton « Modifier » préremplissant le formulaire, sans doublon, avec explication de la recherche par id / apporté : la variable de mode idEnModification, find, la closure dans la boucle / vérifié : 30 lignes conservées après modification, annulation, validation toujours active en mode modification. Décisions perso : tout est modifiable, confirmation obligatoire par bouton.
+Outil : Claude / étape : modification d’un audit / demandé : bouton « Modifier » préremplissant le formulaire, sans doublon, avec explication de la recherche par id / apporté : la variable de mode idEnModification, find, la closure dans la boucle / vérifié : 30 lignes conservées après modification, annulation, validation toujours active en mode modification. Décisions perso : tout est modifiable, confirmation obligatoire par bouton.
+
+Outil : Claude / étape : persistance / demandé : localStorage avec chargement de data.js au premier lancement / apporté : le schéma charger-sauvegarder, JSON.stringify/parse, le try...catch, le renommage de audits en auditsInitiaux / vérifié : survie au F5 et à la fermeture de l’onglet, contenu observé dans l’onglet Application, cas de sauvegarde corrompue. Limites notées : données propres à un navigateur, non sécurisées.

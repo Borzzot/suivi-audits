@@ -229,6 +229,45 @@ th {
   box-shadow: inset 6px 0 0 var(--sans-date);
 }
 
+
+/* ---------- Tableau de bord ----------
+   grid + auto-fit : autant de colonnes que la place le permet (minimum 8 rem chacune).
+   Sur mobile, les cartes passent donc toutes seules sur 2 colonnes, sans media query. */
+#chiffres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem;
+}
+
+.carte-chiffre {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  background: #eef1f4;
+  border-left: 6px solid var(--accent);
+  border-radius: 0.4rem;
+}
+
+.chiffre {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.legende {
+  font-size: 0.9rem;
+  color: #52606d;
+}
+
+/* Mêmes couleurs que les statuts et les retards du tableau : cohérence visuelle */
+.carte-realise  { border-left-color: #166534; }
+.carte-retard   { border-left-color: var(--retard); background: var(--retard-fond); }
+.carte-retard .chiffre { color: var(--retard); }
+.carte-sans-date { border-left-color: var(--sans-date); }
+
+
+
+
 /* ============================================================
    MOBILE : écrans de moins de 700 px de large
    ============================================================

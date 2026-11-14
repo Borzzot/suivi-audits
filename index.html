@@ -31,6 +31,36 @@
   <main>
     <!-- <main> : le contenu principal de la page. Un seul par page -->
 
+          <!-- ===================== TABLEAU DE BORD ===================== -->
+    <section id="tableau-de-bord">
+      <h2>Vue d'ensemble</h2>
+
+      <!-- Chaque "carte" = un chiffre (rempli par le JavaScript) + sa légende.
+           Les id servent au JavaScript pour écrire le bon nombre au bon endroit. -->
+      <div id="chiffres">
+        <div class="carte-chiffre">
+          <span class="chiffre" id="chiffre-total">0</span>
+          <span class="legende">Audits au total</span>
+        </div>
+        <div class="carte-chiffre carte-realise">
+          <span class="chiffre" id="chiffre-realises">0</span>
+          <span class="legende">Réalisés</span>
+        </div>
+        <div class="carte-chiffre">
+          <span class="chiffre" id="chiffre-a-venir">0</span>
+          <span class="legende">Planifiés à venir</span>
+        </div>
+        <div class="carte-chiffre carte-retard">
+          <span class="chiffre" id="chiffre-retard">0</span>
+          <span class="legende">En retard</span>
+        </div>
+        <div class="carte-chiffre carte-sans-date">
+          <span class="chiffre" id="chiffre-a-planifier">0</span>
+          <span class="legende">À planifier (sans date)</span>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== FILTRES ===================== -->
     <section id="filtres">
       <!-- <section> : bloc thématique. L'id sert à le cibler en CSS et en JavaScript -->

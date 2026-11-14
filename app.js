@@ -251,8 +251,60 @@ function afficherAudits(liste) {
     ligne.appendChild(celluleStatut);
     ligne.appendChild(celluleActions); 
     corpsTableau.appendChild(ligne);
+
   }
+
 }
+
+// ------------------------------------------------------------
+// 4 ter. Tableau de bord (bonus)
+// ------------------------------------------------------------
+
+// Les 5 éléments HTML où on écrit les chiffres.
+const chiffreTotal = document.querySelector("#chiffre-total");
+const chiffreRealises = document.querySelector("#chiffre-realises");
+const chiffreAVenir = document.querySelector("#chiffre-a-venir");
+const chiffreRetard = document.querySelector("#chiffre-retard");
+const chiffreAPlanifier = document.querySelector("#chiffre-a-planifier");
+
+// Compte les audits dans 4 catégories qui ne se chevauchent pas :
+// chaque audit tombe dans UNE seule, donc leur somme doit égaler le total.
+function calculerStatistiques() {
+  // On part de 4 compteurs à zéro.
+  const stats = { realises: 0, enRetard: 0, aPlanifier: 0, aVenir: 0 };
+
+  for (const audit of audits) {
+    if (audit.statut === "realise") {
+      // Réalisé : jamais en retard, quelle que soit sa date.
+      stats.realises++;
+    } else if (audit.datePrevue === null) {
+      // Pas de date et pas réalisé : "à planifier".
+      // (Ce test passe AVANT estEnRetard, car estEnRetard renvoie aussi true
+      // pour ces audits : sans cet ordre, on les compterait comme des retards.)
+      stats.aPlanifier++;
+    } else if (estEnRetard(audit)) {
+      // Avec une date, non réalisé, date dépassée : en retard.
+      stats.enRetard++;
+    } else {
+      // Il reste les audits planifiés dont la date n'est pas encore dépassée.
+      stats.aVenir++;
+    }
+  }
+
+  return stats;
+}
+
+// Écrit les chiffres dans la page. "++" ajoute 1 à un compteur.
+function afficherTableauDeBord() {
+  const stats = calculerStatistiques();
+
+  chiffreTotal.textContent = audits.length;
+  chiffreRealises.textContent = stats.realises;
+  chiffreAVenir.textContent = stats.aVenir;
+  chiffreRetard.textContent = stats.enRetard;
+  chiffreAPlanifier.textContent = stats.aPlanifier;
+}
+
 
 // ------------------------------------------------------------
 // 5. Les filtres (étape 5)
@@ -297,6 +349,12 @@ function remplirListesSites() {
 // LA LOGIQUE DES FILTRES : on lit l'état des 3 contrôles, puis on garde
 // uniquement les audits qui respectent TOUTES les conditions.
 function appliquerFiltres() {
+
+  // Le tableau de bord se met à jour à chaque rafraîchissement de la liste
+  // (démarrage, filtre, ajout, modification). Il compte tous les audits,
+  // sans tenir compte des filtres.
+  afficherTableauDeBord();
+
   const siteChoisi = filtreSite.value;           // "" = "Tous les sites"
   const statutChoisi = filtreStatut.value;       // "" = "Tous les statuts"
   const retardSeulement = filtreRetard.checked;  // true ou false

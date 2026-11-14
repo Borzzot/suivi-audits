@@ -1,25 +1,306 @@
-/* Ligne d'un audit en retard : fond rosé pour la repérer d'un coup d'œil */
-.ligne-retard {
-  background-color: #fdecea;
+/* ============================================================
+   style.css : mise en forme (pensée pour le mobile d'abord)
+   ============================================================ */
+
+/* ---------- Couleurs réutilisables ----------
+   Des variables CSS : on change une couleur ici, elle change partout.
+   Elles se lisent avec var(--nom). */
+:root {
+  --texte: #1f2933;
+  --fond: #f4f6f8;
+  --carte: #ffffff;
+  --bordure: #d9dee3;
+  --accent: #1b5e9b;       /* bleu des titres et boutons */
+  --retard: #c62828;       /* rouge : retard daté */
+  --retard-fond: #fdecea;
+  --sans-date: #e65100;    /* orange : à planifier */
 }
 
-/* Badge rouge pour les retards avec date */
+/* ---------- Base ---------- */
+
+/* box-sizing: border-box : la largeur d'un élément inclut son padding et sa bordure.
+   Sans ça, un champ à "100 %" dépasserait de l'écran. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;          /* 16 px : lisible sur mobile */
+  line-height: 1.5;         /* espace entre les lignes */
+  color: var(--texte);
+  background: var(--fond);
+}
+
+/* L'attribut HTML "hidden" doit toujours gagner (sinon le bouton Annuler,
+   qui a un "display" défini plus bas, resterait visible). */
+[hidden] {
+  display: none !important;
+}
+
+header {
+  padding: 1rem;
+  background: var(--accent);
+  color: white;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+/* main : colonne centrée, largeur limitée pour rester lisible sur grand écran */
+main {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Chaque section est une "carte" blanche */
+section {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--carte);
+  border: 1px solid var(--bordure);
+  border-radius: 0.5rem;
+}
+
+/* ---------- Champs et boutons ----------
+   font-size 16 px minimum : en dessous, l'iPhone zoome tout seul sur le champ. */
+label {
+  font-weight: 600;
+}
+
+select,
+input[type="date"] {
+  font: inherit;
+  padding: 0.6rem;
+  border: 1px solid var(--bordure);
+  border-radius: 0.4rem;
+  background: white;
+}
+
+button {
+  font: inherit;
+  padding: 0.6rem 1rem;
+  min-height: 2.75rem;      /* ~44 px : cible assez grande pour un doigt */
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.15);
+}
+
+/* Boutons secondaires (Annuler, Réinitialiser) : fond gris */
+#bouton-annuler,
+#bouton-reinitialiser {
+  background: #e4e7eb;
+  color: var(--texte);
+}
+
+#bouton-reinitialiser {
+  margin-top: 1rem;
+}
+
+/* ---------- Filtres ----------
+   flex + wrap : les éléments se placent côte à côte, et passent à la ligne
+   quand il n'y a plus de place (donc rien à faire de spécial pour le mobile). */
+#filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+#filtres h2 {
+  flex-basis: 100%;         /* le titre occupe toute la ligne */
+  margin: 0;
+}
+
+#filtres select {
+  flex: 1 1 10rem;          /* grandit, rétrécit, base de 10 rem */
+}
+
+#filtre-retard {
+  width: 1.4rem;            /* case plus grande, plus facile à toucher */
+  height: 1.4rem;
+}
+
+/* ---------- Formulaire : champs empilés, pleine largeur ---------- */
+#formulaire-audit {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 30rem;
+}
+
+#formulaire-audit button {
+  margin-top: 0.5rem;
+}
+
+#message-erreur {
+  margin: 0;
+  color: var(--retard);
+  font-weight: 600;
+}
+
+/* ---------- Tableau (écran large) ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--bordure);
+}
+
+th {
+  background: #eef1f4;
+}
+
+/* ---------- Pastilles de statut ---------- */
+.pastille {
+  display: inline-block;
+  padding: 0.1rem 0.7rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.statut-a-planifier {
+  background: #e4e7eb;      /* gris */
+  color: #3e4c59;
+}
+
+.statut-planifie {
+  background: #dbeafe;      /* bleu */
+  color: #1e40af;
+}
+
+.statut-realise {
+  background: #dcfce7;      /* vert */
+  color: #166534;
+}
+
+/* ---------- Retards : visibles d'un coup d'œil ----------
+   3 signaux cumulés (pas seulement la couleur, pour les daltoniens) :
+   fond rosé + barre rouge à gauche + badge avec texte. */
+.ligne-retard {
+  background: var(--retard-fond);
+}
+
+.ligne-retard td:first-child {
+  /* inset box-shadow = barre colorée dessinée à l'intérieur de la cellule */
+  box-shadow: inset 6px 0 0 var(--retard);
+  font-weight: 700;
+}
+
 .badge-retard {
   display: inline-block;
-  margin-left: 0.5em;
-  padding: 0.1em 0.6em;
-  border-radius: 1em;
-  background-color: #c62828;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.7rem;
+  border-radius: 1rem;
+  background: var(--retard);
   color: white;
-  font-size: 0.85em;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-/* Badge orange pour "à planifier" : situation différente d'un retard daté */
+/* Orange pour "à planifier" : situation différente d'un retard daté */
 .badge-sans-date {
-  background-color: #e65100;
+  background: var(--sans-date);
 }
 
-/* Ligne en cours de modification : non géré ici, mais le bouton Annuler a un style simple */
-#bouton-annuler {
-  margin-left: 0.5em;
+/* Barre orange aussi pour ces lignes. Le sélecteur est plus précis que
+   ".ligne-retard td:first-child", donc il l'emporte. */
+.ligne-retard:has(.badge-sans-date) td:first-child {
+  box-shadow: inset 6px 0 0 var(--sans-date);
+}
+
+/* ============================================================
+   MOBILE : écrans de moins de 700 px de large
+   ============================================================
+   @media applique les règles seulement si la condition est vraie.
+   Ici, le tableau devient une pile de "cartes" : une carte par audit,
+   avec une étiquette devant chaque valeur (grâce à data-label). */
+@media (max-width: 700px) {
+
+  main {
+    padding: 0.5rem;
+  }
+
+  /* On cache l'en-tête : les étiquettes sont répétées dans chaque carte */
+  thead {
+    display: none;
+  }
+
+  /* table, tbody, tr, td deviennent de simples blocs empilés */
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Une ligne = une carte */
+  tr {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background: var(--carte);
+    border: 1px solid var(--bordure);
+    border-radius: 0.5rem;
+  }
+
+  td {
+    border-bottom: none;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* L'étiquette : le texte de data-label est inséré avant la valeur */
+  td::before {
+    content: attr(data-label);
+    display: inline-block;
+    min-width: 6.5rem;
+    font-weight: 600;
+    color: #52606d;
+  }
+
+  /* Carte en retard : la barre rouge passe sur le bord gauche de la carte */
+  .ligne-retard {
+    background: var(--retard-fond);
+    border-left: 6px solid var(--retard);
+  }
+
+  .ligne-retard:has(.badge-sans-date) {
+    border-left-color: var(--sans-date);
+  }
+
+  /* On retire la barre dessinée par la version "écran large" */
+  .ligne-retard td:first-child,
+  .ligne-retard:has(.badge-sans-date) td:first-child {
+    box-shadow: none;
+  }
+
+  /* Le bouton Modifier prend toute la largeur de la carte */
+  td button {
+    width: 100%;
+  }
+
+  /* Formulaire : pleine largeur */
+  #formulaire-audit {
+    max-width: none;
+  }
 }

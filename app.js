@@ -193,9 +193,15 @@ function afficherAudits(liste) {
 
     celluleSite.textContent = audit.site;
     celluleDate.textContent = formaterDate(audit.datePrevue);
-    celluleStatut.textContent = libellesStatut[audit.statut];
 
-    // NOUVEAU : si l'audit est en retard, on repère la ligne et on ajoute un badge.
+        // Le statut devient une petite pastille <span> avec une classe propre à son statut
+    // ("statut-planifie", "statut-realise"...). Le CSS s'en sert pour choisir la couleur.
+    const pastille = document.createElement("span");
+    pastille.classList.add("pastille", "statut-" + audit.statut);
+    pastille.textContent = libellesStatut[audit.statut];
+    celluleStatut.appendChild(pastille);
+
+    //si l'audit est en retard, on repère la ligne et on ajoute un badge.
     if (estEnRetard(audit)) {
       // classList.add ajoute une classe CSS à la ligne (le style sera dans style.css).
       ligne.classList.add("ligne-retard");
@@ -232,6 +238,13 @@ function afficherAudits(liste) {
     });
 
     celluleActions.appendChild(boutonModifier);
+
+        // data-label : texte lu par le CSS (attr(data-label)) pour afficher
+    // "Site :", "Date prévue :"... devant chaque valeur quand le tableau devient des cartes sur mobile.
+    celluleSite.dataset.label = "Site";
+    celluleDate.dataset.label = "Date prévue";
+    celluleStatut.dataset.label = "Statut";
+    celluleActions.dataset.label = "Actions";
 
     ligne.appendChild(celluleSite);
     ligne.appendChild(celluleDate);
